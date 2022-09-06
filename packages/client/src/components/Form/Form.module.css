@@ -1,0 +1,27 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.container form > * {
+    margin-top: 1.5rem;
+}
+
+.container form{
+    margin: 1rem auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.button{
+    margin: 0 auto;
+    min-width: 50%;
+    margin-bottom: 3rem;
+}
+
+.container input {
+    min-width: 20rem;
+}
+

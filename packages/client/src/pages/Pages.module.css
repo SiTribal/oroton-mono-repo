@@ -1,0 +1,45 @@
+.hidden{
+    display: none;
+}
+
+.display{
+    display: block;
+}
+
+.mainGameContainer{
+    display: flex;
+    flex-direction: column;
+}
+
+.mainGameContainer button{
+    margin: 3rem auto;
+}
+
+.finishTile{
+    width: 3rem;
+    height: 3rem;
+    margin: 1px;
+    background-color: #aaa8a8;
+    border-radius: 50%;
+    display: inline-block;
+    padding: 0;
+    vertical-align: top;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container{
+    display: grid;
+    margin-top: 15rem;
+    margin-left: 30rem;
+    justify-content: center;
+}
+
+.white{
+    background-color: red;
+}
+.black{
+    background-color: black;
+}

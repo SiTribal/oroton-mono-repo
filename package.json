@@ -14,6 +14,10 @@
     ]
   },
   "scripts": {
+    "start": "concurrently \"yarn workspace @si/server dev\" \"yarn workspace @si/client start\" \"yarn workspace @si/shared dev\"",
     "build": "lerna run build"
+  },
+  "dependencies": {
+    "concurrently": "^7.3.0"
   }
 }

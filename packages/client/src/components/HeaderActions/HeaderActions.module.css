@@ -1,0 +1,14 @@
+.actions {
+    display: flex;
+    column-gap: 1rem;
+    justify-content: end;
+  }
+  
+  .action {
+    background-color: transparent;
+    border: none;
+    color: #FFFFFF;
+    font-size: 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+  }

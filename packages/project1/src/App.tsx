@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {Greeting} from '@si/shared'
+import {Greeting, MyInterface} from '@si/shared'
 
 function App() {
   return (

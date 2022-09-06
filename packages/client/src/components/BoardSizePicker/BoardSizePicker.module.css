@@ -1,0 +1,48 @@
+    .container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5rem;
+    }
+
+    .container h3{
+        font-size: 2rem;
+        text-transform: uppercase;
+        font-weight: bolder;
+        color: #817997;
+    }
+
+    .container details summary {
+        list-style-type: none;
+    }
+    .container ul {
+        display: grid;
+    }
+
+    .container li {
+        display: inline-block;
+        font-size: 1rem;
+        padding: 0.5rem;
+        text-transform: uppercase;
+        font-weight: bolder;
+        color: #817997;
+        list-style-type: none;
+        margin: 0 auto 1rem auto;
+    }
+
+    .hover:hover{
+        background-color: #817997;
+        cursor: pointer;
+        color: white;
+    }
+
+    .container .active {
+        background-color: #817997;
+        cursor: pointer;
+        color: white;
+    }
+
+    .disabled{
+        opacity: 50%;
+    }
+    
