@@ -1,8 +1,9 @@
 import { publicKey, privateKey } from './../app';
 import express, { Request, Response } from 'express'
-import {createUser ,getUserByUsername } from '../service/auth.service'
+import {createUser ,getUserByUsername, authenticateToken } from '../service/auth.service'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+
 
 const authHandler = express.Router()
 
@@ -22,7 +23,7 @@ authHandler.post('/register', async(req: Request, res: Response) => {
         const {username, password} = req.body
         const existingUser = await getUserByUsername(username)
         if (existingUser) {
-            return res.sendStatus(409).send('User Already Exist. Please Login')
+            return res.status(409).send('User Already Exist. Please Login')
           }
           const encryptedPassword = await bcrypt.hash(password, 10)
           const newUser = await createUser({
@@ -42,17 +43,6 @@ authHandler.get('/verify', authenticateToken, (req: Request, res: Response) => {
 })
 
 
-function authenticateToken(req, res, next){
-  const authHeader = req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1] 
-  if(token == null) return res.sendStatus(401)
-  jwt.verify(token, privateKey, (err, user) => {
-      if(err) {
-        console.log(err)
-        return res.sendStatus(403)};
-      req.user = user
-      next()
-  })
-}
+
 
 export default authHandler

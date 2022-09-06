@@ -3,6 +3,7 @@ import s from "./StartButton.module.css"
 import { useNavigate } from 'react-router-dom'
 import {useLocalStorage} from '../../hooks'
 import { post } from '../../utils/http'
+import {Game } from '@si/shared'
 
 
 interface props{
@@ -30,7 +31,13 @@ interface props{
   },[loggedIn])
   
   const handleClick = () =>{
-    post('/game/create', {"username": user.user.username}).then((res: any) => saveGameId({'gameId':res.newGame._id}))
+
+    const game: Game = {
+      "username": user.user.username as string,
+      "boardSize": boardSize as number
+    }
+
+    post('/game/create', game).then((res: any) => saveGameId({'gameId':res.newGame._id}))
     saveBoardSizeStore({'boardSize': boardSize})
     navigate('/game')
   }

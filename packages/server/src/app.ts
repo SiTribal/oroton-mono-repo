@@ -1,4 +1,4 @@
-import { GeneratePair } from './../Keys/Generator';
+import { GeneratePair } from '../Keys/Generator.js';
 import express, {Express} from 'express'
 import dotenv from 'dotenv'
 import authHandler from './handlers/auth.handler'
@@ -11,11 +11,10 @@ connectDB()
 import * as fs from "fs";
 import * as path from "path";
 
-GeneratePair()
+// GeneratePair()
 export const privateKey = fs.readFileSync(
   path.join(__dirname, "../Keys/private.pem"), "utf8");
 export const publicKey = fs.readFileSync(path.join(__dirname, "../Keys/public.pem"), "utf8")
-
 const app: Express = express()
 const port = process.env.PORT 
 app.use(express.json())

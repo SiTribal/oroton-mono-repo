@@ -1,0 +1,4 @@
+move the create win logic from click handler to server response, include player move logic
+use a deleteGame on reset or leave 
+read game logs find all by collection
+individual gameLog 

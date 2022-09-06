@@ -49,6 +49,13 @@ const Form: React.FC<Props> = ({register}: Props) => {
             navigate('/')
             setLoggedInCB(true)
             saveUserStore({user: UserStoreObject})
+          }).catch((err) => {
+            setError(true)
+            setUsername('')
+            setPassword('')
+            setTimeout(() => {
+              setError(false)
+            }, 3000)
           })
         }
         else{
@@ -66,20 +73,6 @@ const Form: React.FC<Props> = ({register}: Props) => {
           }).catch((err) => {
             console.log(err)
           })
-
-
-          if(JSON.stringify(user) === JSON.stringify(FormUser)){
-            navigate('/')
-            setLoggedInCB(true)
-            saveUserStore({user: FormUser})
-          }else{
-            setError(true)
-            setUsername('')
-            setPassword('')
-            setTimeout(() => {
-              setError(false)
-            }, 3000)
-          }
         }
     } 
 
@@ -96,7 +89,7 @@ const Form: React.FC<Props> = ({register}: Props) => {
         </label>
         <button className={s.button} type='submit'>{ 
         register ? <>Register</> : <>Login</>}</button>
-        {error ? <h3 data-testid="error message">Error Incorrect username and or password</h3> : <></> }
+        {error ? <h3 data-testid="error message">Error username already exists</h3> : <></> }
       </form>
     </div>
   )

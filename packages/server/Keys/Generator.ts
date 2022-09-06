@@ -7,9 +7,12 @@ export const GeneratePair = () => {
     var publicKey = key.exportKey("public");
     var privateKey = key.exportKey("private")    
 
-    fs.openSync("./Keys/public.pem", "w")
+    console.log(publicKey)
+    console.log(privateKey)
+
+    fs.openSync("./public.pem", "w")
     fs.writeFileSync("./public.pem", publicKey, "utf8")
 
-    fs.openSync("./Keys/private.pem", "w")
+    fs.openSync("./private.pem", "w")
     fs.writeFileSync("./private.pem", privateKey, "utf8")
 }

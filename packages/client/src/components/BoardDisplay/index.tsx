@@ -4,7 +4,7 @@ import { DisplayTile, GameTile } from '../Tiles'
 import { checkForWin } from '../../utils/checkForWin'
 import { useLocalStorage } from '../../hooks'
 import { useNavigate } from 'react-router-dom'
-import {put} from '../../utils/http'
+import {put, del} from '../../utils/http'
 interface iProp {
   gameId?: string
   boardSize?: number
@@ -60,8 +60,7 @@ const BoardDisplay: React.FC<iProp> = ({
   const tileRef = useRef<Array<HTMLDivElement | null | undefined>>([])
   const [playerTurn, setPlayerTurn] = useState<'black' | 'white'>('black')
 
-
-  // const [gameId, setGameId] = React.useState('')
+  
   const [boardDisplay, setBoardDisplay] = React.useState(0)
   const [currentGame, setCurrentGame] = useState<MoveObject[]>()
   const [win, setWin] = useState(false)
@@ -79,8 +78,7 @@ const BoardDisplay: React.FC<iProp> = ({
 
   const clickFunction = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const gameID = gameId as any
-    console.log(gameId)
-    put(`game/${gameID.gameId}`, {"color":playerTurn, "move": e.currentTarget.id}).then((res) => console.log(res))
+    put(`game/${gameID.gameId}`, {"color":playerTurn, "move": e.currentTarget.id}).then((res) => console.log(res)).catch(err => console.log(err))
     if(emptyTiles - 1 === 0){
       setDraw(true)
     }
@@ -215,7 +213,6 @@ const BoardDisplay: React.FC<iProp> = ({
         .map((_, i) => <DisplayTile key={`${i}`} className={s.tile} />)
 
   useEffect(() => {
-
     setBoardDisplay(boardSize)
   }, [boardSize])
 

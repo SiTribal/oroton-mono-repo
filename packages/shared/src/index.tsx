@@ -1,5 +1,7 @@
-import Greeting from './Greetings';
-export { Greeting };
-export interface MyInterface{
-    name: string
+export type Game  = {
+    _id?: string
+    username: string
+    moves?: Map<string, string>
+    boardSize: number
+    status?: 'win' | 'draw'
 }
