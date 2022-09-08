@@ -8,7 +8,6 @@ import { checkForWin } from '../utils/checkForWin'
 const gameHandler = express.Router()
 
 gameHandler.post('/create', async(req: Request, res: Response) => {
-    console.log('check')
     const requestObject = req as any
     const userId = await getUserByUsername(requestObject.body.username) as unknown as Game
     const username = userId._id as string
@@ -51,7 +50,6 @@ gameHandler.put('/:id', async(req: Request, res: Response) => {
                 const lastPlayerTurn = Array.from(moves as Moves)[Array.from(moves as Moves).length-1] 
                 const color = lastPlayerTurn[1]
                 const target = lastPlayerTurn[0]
-                console.log(moves)
                 console.log(checkForWin(moves as Moves, color as 'black' | 'white', target))
                 if(checkForWin(moves as Moves, color as 'black' | 'white', target)){
                     const responseObject = {
@@ -100,7 +98,4 @@ gameHandler.delete('/delete/:id', async(req:Request, res:Response) => {
     const deletedGame = await deleteGame(gameId)
     return res.json(deletedGame)
 })
-// read the existing game
-// check if the moves is greater than 5 if yes check if  it is a win 
-// if it is a win then update the response 
 export default gameHandler

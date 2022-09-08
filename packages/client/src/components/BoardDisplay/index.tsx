@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useContext } from 'react'
+import { GameSetupContext } from '../../context'
 import s from './BoardDisplay.module.css'
 import { DisplayTile, GameTile } from '../Tiles'
 import { checkForWin } from '../../utils/checkForWin'
@@ -192,8 +193,11 @@ const BoardDisplay: React.FC<iProp> = ({
       }
       savePreviousGames({ previousGames: arr })
     } else {
+      const gameId: any = localStorage.getItem('gameId')
+      console.log(JSON.parse(gameId).gameId)
+      const x = JSON.parse(gameId).gameId
       console.log(gameId)
-      del(`/game/delete/${gameId}`).then((res) => console.log(res))
+      del(`/game/delete/${x}`).then((res) => console.log(res))
       localStorage.removeItem('gameId')
       navigate('/')
     }
