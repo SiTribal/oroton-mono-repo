@@ -21,7 +21,7 @@ export async function updateMoves(id: string, moves: any){
 }
 
 export async function deleteGame(id: string) {
-    return GameModel.deleteOne({
+    return GameModel.findOneAndDelete({
       _id: new mongoose.Types.ObjectId(id)
     })
   }

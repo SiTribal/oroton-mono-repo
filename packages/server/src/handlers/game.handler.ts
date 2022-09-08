@@ -97,9 +97,8 @@ gameHandler.put('/:id', async(req: Request, res: Response) => {
 
 gameHandler.delete('/delete/:id', async(req:Request, res:Response) => {
     const gameId = req.params.id
-    console.log(gameId)
-    await deleteGame(gameId)
-    return res.sendStatus(200)
+    const deletedGame = await deleteGame(gameId)
+    return res.json(deletedGame)
 })
 // read the existing game
 // check if the moves is greater than 5 if yes check if  it is a win 

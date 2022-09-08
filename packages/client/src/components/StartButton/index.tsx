@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react'
+import { GameSetupContext } from '../../context'
 import s from "./StartButton.module.css"
 import { useNavigate } from 'react-router-dom'
 import {useLocalStorage} from '../../hooks'
@@ -12,6 +13,8 @@ interface props{
 }
 
  const StartButton: React.FC<props> = ({boardSize ,loggedIn}: props) => {
+  const gameSetupContext = useContext(GameSetupContext)
+  const {setGameIdCB} = gameSetupContext
   const [user] = useLocalStorage<any>('user', [])
   const navigate = useNavigate()
   const [buttonDisabled, setButtonDisabled] = useState(true)
@@ -37,7 +40,12 @@ interface props{
       "boardSize": boardSize as number
     }
 
-    post('/game/create', game).then((res: any) => saveGameId({'gameId':res.newGame._id}))
+    post('/game/create', game).then((res: any) => {
+      if(setGameIdCB){
+        setGameIdCB(res.newGame._id)
+      }
+      console.log(res.newGame._id)
+      saveGameId({'gameId':res.newGame._id})})
     saveBoardSizeStore({'boardSize': boardSize})
     navigate('/game')
   }

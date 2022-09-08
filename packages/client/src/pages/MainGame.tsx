@@ -1,4 +1,5 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState, useContext} from 'react'
+import { GameSetupContext } from '../context'
 import * as components from '../components'
 import { useLocalStorage } from '../hooks'
 import s from './Pages.module.css'
@@ -7,9 +8,10 @@ import {Game } from '@si/shared'
 const {BoardDisplay} = components 
 
  const MainGame: React.FC = () => {
-
+    const gameSetupContext = useContext(GameSetupContext)
+    const {gameId, setGameIdCB} = gameSetupContext
     const [boardSize] = useLocalStorage<any>('boardSize', []) 
-    const [gameId] = useLocalStorage<any>('gameId', []) 
+    // const [gameId] = useLocalStorage<any>('gameId', []) 
     const [user] = useLocalStorage<any>('user', [])
     const [__, saveGameId] = useLocalStorage<Record<string, string | undefined>>('gameId', {})
     const [win, setWin] = useState(false)
@@ -17,21 +19,25 @@ const {BoardDisplay} = components
     const gameResponseCB = () => {
 
     }
+
+    useEffect(() => {
+      console.log(gameId)
+    },[gameId])
     const setWinCB = (win?: boolean) => {
       if(win){
         setWin(win)
       }
     }
-    console.log(boardSize)
-
 
     const resetHandler = () => {
       const game: Game = {
       "username": user.user.username as string,
-      "boardSize": boardSize as number
-    }
+      "boardSize": boardSize.boardSize as number
+    }     
       del(`/game/delete/${gameId}`).then(res => console.log(res))
-      post('/game/create', game).then((res: any) => saveGameId({'gameId':res.newGame._id}))
+      post('/game/create', game).then((res: any) => {
+        if(setGameIdCB) setGameIdCB(res.newGame_id)})
+      window.location.reload()
     }
 
   return (

@@ -48,8 +48,8 @@ const BoardDisplay: React.FC<iProp> = ({
 }: iProp) => {
 
   const navigate = useNavigate()
-  const returnDraw = () => {
-    setEmptyTiles(emptyTiles - 1)
+  if(gameActive){
+    console.log(gameId)
   }
 
 
@@ -77,12 +77,18 @@ const BoardDisplay: React.FC<iProp> = ({
   )
 
   const clickFunction = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const gameID = gameId as any
-    put(`game/${gameID.gameId}`, {"color":playerTurn, "move": e.currentTarget.id}).then((res) => console.log(res)).catch(err => console.log(err))
-    if(emptyTiles - 1 === 0){
-      setDraw(true)
-    }
-    returnDraw()
+    console.log(gameId)
+    put(`game/${gameId}`, {"color":playerTurn, "move": e.currentTarget.id})
+    .then((res: any) => {
+      const status = res.responseObject.status
+      if(status==='win'){
+        setWin(true)
+      }
+      if(status==='draw'){
+        setDraw(true)
+      }
+    })
+    .catch(err => console.log(err))
     if (!win) {
       const { id } = e.currentTarget
       if(!boardMap.has(id)){
@@ -128,7 +134,7 @@ const BoardDisplay: React.FC<iProp> = ({
                   id
                 )
                 savePreviousGames({ previousGames: arr })
-                setWin(true)
+                // setWin(true)
                 setWinBanner(playerTurn + ' has won')
                 if (setWinCB) setWinCB(true)
               } else {
@@ -186,6 +192,9 @@ const BoardDisplay: React.FC<iProp> = ({
       }
       savePreviousGames({ previousGames: arr })
     } else {
+      console.log(gameId)
+      del(`/game/delete/${gameId}`).then((res) => console.log(res))
+      localStorage.removeItem('gameId')
       navigate('/')
     }
   }

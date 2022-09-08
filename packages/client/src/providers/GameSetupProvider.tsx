@@ -9,11 +9,17 @@ interface iProps {
  const GameSetupProvider: React.FC<iProps> = ({children}: iProps) => {
 
     const [boardSize, setBoardSize] = useState<number | undefined>(1)
+    const [gameId, setGameId] = useState<string | undefined>('')
     const setBoardSizeCB = (boardSize?: number) => {
         setBoardSize(boardSize)
     }
+    const setGameIdCB = (gameId?: string) => {
+        setGameId(gameId)
+    }
     const gameSetupVal: GameSetupType = {
-        boardSize,   
+        boardSize,
+        gameId,
+        setGameIdCB,   
         setBoardSizeCB
     }
 
