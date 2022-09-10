@@ -49,10 +49,6 @@ const BoardDisplay: React.FC<iProp> = ({
 }: iProp) => {
 
   const navigate = useNavigate()
-  if(gameActive){
-    console.log(gameId)
-  }
-
 
   const [previousGames, savePreviousGames] = useLocalStorage<
     Record<string, WinObject[]>
@@ -78,19 +74,18 @@ const BoardDisplay: React.FC<iProp> = ({
   )
 
   const clickFunction = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    console.log(gameId)
-    put(`game/${gameId}`, {"color":playerTurn, "move": e.currentTarget.id})
-    .then((res: any) => {
-      const status = res.responseObject.status
-      if(status==='win'){
-        setWin(true)
-      }
-      if(status==='draw'){
-        setDraw(true)
-      }
-    })
-    .catch(err => console.log(err))
     if (!win) {
+      put(`game/${gameId}`, {"color":playerTurn, "move": e.currentTarget.id})
+      .then((res: any) => {
+        const status = res.responseObject.status
+        if(status==='win'){
+          setWin(true)
+        }
+        if(status==='draw'){
+          setDraw(true)
+        }
+      })
+      .catch(err => console.log(err))
       const { id } = e.currentTarget
       if(!boardMap.has(id)){
         const currentMap = boardMapCB(
@@ -107,40 +102,7 @@ const BoardDisplay: React.FC<iProp> = ({
                 setCurrentGame([{ color: 'white', coOrd: id }])
               }
               el.classList.add(`${s.white}`)
-              if (checkForWin(currentMap, playerTurn, e)) {
-                const currGameArr = [...currentGame as [], {
-                  color: playerTurn,
-                  coOrd: id
-                }]
-                const arr = []
-                const date = new Date()
-                const dateFormat: string =
-                date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear()
-                const winObject: WinObject = {
-                  boardSize: boardSize,
-                  id: JSON.stringify(new Date()),
-                  winner: playerTurn,
-                  currentGame: currGameArr as MoveObject[],
-                  date: dateFormat
-                }
-                if (previousGames.previousGames) {
-                  arr.push(...previousGames.previousGames, winObject)
-                } else {
-                  arr.push(winObject)
-                }
-                if(saveWinCB) saveWinCB(
-                  winObject,
-                  playerTurn,
-                  currentGame,
-                  id
-                )
-                savePreviousGames({ previousGames: arr })
-                // setWin(true)
-                setWinBanner(playerTurn + ' has won')
-                if (setWinCB) setWinCB(true)
-              } else {
-                setPlayerTurn('black')
-              }
+              setPlayerTurn('black')
             } else {
               if (currentGame) {
                 setCurrentGame([...currentGame, { color: 'black', coOrd: id }])
@@ -148,32 +110,32 @@ const BoardDisplay: React.FC<iProp> = ({
                 setCurrentGame([{ color: 'black', coOrd: id }])
               }
               el.classList.add(`${s.black}`)
-              const date = new Date()
-              const dateFormat: string =
-                date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear()
-              if (checkForWin(currentMap, playerTurn, e)) {
-                const currGameArr = [...currentGame as [], {
-                  color: playerTurn,
-                  coOrd: id
-                }]
-                const arr = []
-                const winObject: WinObject = {
-                  boardSize: boardSize,
-                  id: JSON.stringify(new Date()),
-                  winner: playerTurn,
-                  currentGame: currGameArr as MoveObject[],
-                  date: dateFormat
-                }
-                setWinObject(winObject)
-                if (previousGames.previousGames) {
-                  arr.push(...previousGames.previousGames, winObject)
-                } else {
-                  arr.push(winObject)
-                }
-                setWin(true)
-                setWinBanner(playerTurn + ' has won')
-                if (setWinCB) setWinCB(true)
-              }
+              // const date = new Date()
+              // const dateFormat: string =
+              //   date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear()
+              // if (checkForWin(currentMap, playerTurn, e)) {
+              //   const currGameArr = [...currentGame as [], {
+              //     color: playerTurn,
+              //     coOrd: id
+              //   }]
+              //   const arr = []
+              //   const winObject: WinObject = {
+              //     boardSize: boardSize,
+              //     id: JSON.stringify(new Date()),
+              //     winner: playerTurn,
+              //     currentGame: currGameArr as MoveObject[],
+              //     date: dateFormat
+              //   }
+              //   setWinObject(winObject)
+              //   if (previousGames.previousGames) {
+              //     arr.push(...previousGames.previousGames, winObject)
+              //   } else {
+              //     arr.push(winObject)
+              //   }
+              //   setWin(true)
+              //   setWinBanner(playerTurn + ' has won')
+              //   if (setWinCB) setWinCB(true)
+              // }
               setPlayerTurn('white')
             }
           }

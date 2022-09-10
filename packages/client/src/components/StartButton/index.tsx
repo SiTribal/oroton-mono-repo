@@ -19,9 +19,6 @@ interface props{
   const navigate = useNavigate()
   const [buttonDisabled, setButtonDisabled] = useState(true)
   const [buttonClass, setButtonClass] = useState<string>(`${s.container} ${s.disabled}`)
-  const [__, saveGameId] = useLocalStorage<
-    Record<string, string | undefined>
-  >('gameId', {})
   const [_, saveBoardSizeStore] = useLocalStorage<
     Record<string, number | undefined>
   >('boardSize', {})
@@ -40,14 +37,16 @@ interface props{
       "boardSize": boardSize as number
     }
 
-    post('/game/create', game).then((res: any) => {
+    post('/game/create', game)
+    .then((res: any) => {
+      localStorage.removeItem('gameId')
       if(setGameIdCB){
         setGameIdCB(res.newGame._id)
       }
-      console.log(res.newGame._id)
-      saveGameId({'gameId':res.newGame._id})})
-    saveBoardSizeStore({'boardSize': boardSize})
-    navigate('/game')
+      localStorage.setItem("gameId", res.newGame._id)})
+    .catch((err) => console.log(err))
+      saveBoardSizeStore({'boardSize': boardSize})
+      navigate('/game')
   }
 
   return (
