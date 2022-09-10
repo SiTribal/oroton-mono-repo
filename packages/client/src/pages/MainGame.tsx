@@ -19,7 +19,6 @@ const MainGame: React.FC = () => {
   useEffect(() => {
     const gameId: any = localStorage.getItem("gameId");
     if (gameId != null) {
-      console.log(gameId);
       setGameIdCB(gameId);
     }
   });
@@ -36,7 +35,6 @@ const MainGame: React.FC = () => {
       username: user.user.username as string,
       boardSize: boardSize.boardSize as number,
     };
-    console.log(gameId)
     del(`/game/delete/${gameId}`)
       .then((res) => localStorage.removeItem("gameId"))
       .catch((err) => console.log(err));

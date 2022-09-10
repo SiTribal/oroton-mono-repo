@@ -2,10 +2,9 @@ import React, { useEffect, useRef, useState, useContext } from 'react'
 import { GameSetupContext } from '../../context'
 import s from './BoardDisplay.module.css'
 import { DisplayTile, GameTile } from '../Tiles'
-import { checkForWin } from '../../utils/checkForWin'
 import { useLocalStorage } from '../../hooks'
 import { useNavigate } from 'react-router-dom'
-import {put, del} from '../../utils/http'
+import {put, del, get} from '../../utils/http'
 interface iProp {
   gameId?: string
   boardSize?: number
@@ -15,15 +14,6 @@ interface iProp {
   saveWinCB?: (win: WinObject, playerTurn: any, currentGame: any, id:any) => void
 }
 
-const boardMapCB = (
-  currentTile: string,
-  boardMap: Map<string, string>,
-  color: 'black' | 'white'
-) => {
-  const updatedMap = boardMap
-  updatedMap.set(currentTile, color)
-  return updatedMap
-}
 
 export type MoveObject = {
   color: 'black' | 'white'
@@ -45,25 +35,15 @@ const BoardDisplay: React.FC<iProp> = ({
   gameActive = false,
   boardMap = new Map(),
   setWinCB,
-  saveWinCB
 }: iProp) => {
 
   const navigate = useNavigate()
-
-  const [previousGames, savePreviousGames] = useLocalStorage<
-    Record<string, WinObject[]>
-  >('previous-games', {})
-
   const tileRef = useRef<Array<HTMLDivElement | null | undefined>>([])
   const [playerTurn, setPlayerTurn] = useState<'black' | 'white'>('black')
-
-  
   const [boardDisplay, setBoardDisplay] = React.useState(0)
   const [currentGame, setCurrentGame] = useState<MoveObject[]>()
   const [win, setWin] = useState(false)
-  const [winObject, setWinObject] = useState<WinObject>({} as WinObject)
   const [draw, setDraw] = useState(false)
-  const [emptyTiles, setEmptyTiles] = useState(boardSize * boardSize)
   const [winBanner, setWinBanner] = useState('')
   const dynamicMessageDisplay = gameActive ? (
     <>{playerTurn} player turn</>
@@ -73,26 +53,27 @@ const BoardDisplay: React.FC<iProp> = ({
     </>
   )
 
+  const postMoveCheckWin = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    put(`game/${gameId}`, {"color":playerTurn, "move": e.currentTarget.id})
+    .then((res: any) => {
+      const {status} = res.responseObject.status
+      if(status==='win'){
+        setWin(true)
+        setWinBanner(playerTurn + ' has won')
+      }
+      if(status==='draw'){
+        setDraw(true)
+      }
+    })
+    .catch(err => console.log(err))
+  }
+
   const clickFunction = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!win) {
-      put(`game/${gameId}`, {"color":playerTurn, "move": e.currentTarget.id})
-      .then((res: any) => {
-        const status = res.responseObject.status
-        if(status==='win'){
-          setWin(true)
-        }
-        if(status==='draw'){
-          setDraw(true)
-        }
-      })
-      .catch(err => console.log(err))
       const { id } = e.currentTarget
       if(!boardMap.has(id)){
-        const currentMap = boardMapCB(
-          id,
-          boardMap as Map<string, string>,
-          playerTurn
-        )
+        boardMap.set(id, playerTurn)
+       postMoveCheckWin(e)
         tileRef.current.forEach(el => {
           if (el?.id === id) {
             if (playerTurn === 'white') {
@@ -110,32 +91,10 @@ const BoardDisplay: React.FC<iProp> = ({
                 setCurrentGame([{ color: 'black', coOrd: id }])
               }
               el.classList.add(`${s.black}`)
-              // const date = new Date()
-              // const dateFormat: string =
-              //   date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear()
-              // if (checkForWin(currentMap, playerTurn, e)) {
-              //   const currGameArr = [...currentGame as [], {
-              //     color: playerTurn,
-              //     coOrd: id
-              //   }]
-              //   const arr = []
-              //   const winObject: WinObject = {
-              //     boardSize: boardSize,
-              //     id: JSON.stringify(new Date()),
-              //     winner: playerTurn,
-              //     currentGame: currGameArr as MoveObject[],
-              //     date: dateFormat
-              //   }
-              //   setWinObject(winObject)
-              //   if (previousGames.previousGames) {
-              //     arr.push(...previousGames.previousGames, winObject)
-              //   } else {
-              //     arr.push(winObject)
-              //   }
-              //   setWin(true)
-              //   setWinBanner(playerTurn + ' has won')
-              //   if (setWinCB) setWinCB(true)
-              // }
+              if (win) {
+                setWin(true)
+                if (setWinCB) setWinCB(true)
+              }
               setPlayerTurn('white')
             }
           }
@@ -145,27 +104,11 @@ const BoardDisplay: React.FC<iProp> = ({
   }
 
   const clickHandler = () => {
-    if(win){
-      navigate('/games')
-      const arr = []
-      if (previousGames.previousGames) {
-        arr.push(...previousGames.previousGames, winObject)
-      } else {
-        arr.push(winObject)
-      }
-      savePreviousGames({ previousGames: arr })
-    } else {
-      const gameId: any = localStorage.getItem('gameId')
-      console.log(JSON.parse(gameId).gameId)
-      const x = JSON.parse(gameId).gameId
-      console.log(gameId)
-      del(`/game/delete/${x}`).then((res) => console.log(res))
-      localStorage.removeItem('gameId')
-      navigate('/')
-    }
+    navigate('/games')
   }
 
-  const dynamicBoardDisplay = gameActive
+
+  let dynamicBoardDisplay = gameActive
     ? <>  {
       Array(boardDisplay * boardDisplay)
         .fill('_')
@@ -180,16 +123,20 @@ const BoardDisplay: React.FC<iProp> = ({
             className={s.gameTile}
           />
         ))}
-      <button style={{ border: 'grey 1px solid', padding: '1rem', fontSize: '2rem', color: 'white', background: 'grey', position: 'absolute', left: '20rem', 
-      top: '7rem' }} onClick = {clickHandler}>{win ? <div style={{ margin: 'auto' }}>Store Game</div> : <>Return Home</>}</button>
+        {win ?<button style={{ border: 'grey 1px solid', padding: '1rem', fontSize: '2rem', color: 'white', background: 'grey', position: 'absolute', left: '20rem', 
+      top: '7rem' }} onClick = {clickHandler}>Store Game</button> : <></>}
+      
     </> 
     : Array(boardDisplay * boardDisplay)
         .fill('_')
         .map((_, i) => <DisplayTile key={`${i}`} className={s.tile} />)
 
+
   useEffect(() => {
     setBoardDisplay(boardSize)
   }, [boardSize])
+
+
 
   return (
     <div className={s.container}>

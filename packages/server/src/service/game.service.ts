@@ -1,6 +1,9 @@
 import mongoose, {DocumentDefinition} from "mongoose";
 import GameModel, {GameDocument} from '../model/game.model'
 
+export async function findAllGames(){
+    return await GameModel.find().lean()
+}
 
 export async function createGame(game:DocumentDefinition<GameDocument>){
     return GameModel.create(game)

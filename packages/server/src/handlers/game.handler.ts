@@ -1,9 +1,10 @@
 import express, { Request, Response } from 'express'
-import {createGame, updateMoves, deleteGame} from '../service/game.service'
+import {createGame, updateMoves, deleteGame, findAllGames} from '../service/game.service'
 import { getUserByUsername } from '../service/auth.service'
 import { getGameById } from '../service/game.service'
 import {Game} from '@si/shared'
 import { checkForWin } from '../utils/checkForWin'
+import { readdirSync } from 'fs'
 
 const gameHandler = express.Router()
 
@@ -24,6 +25,17 @@ gameHandler.post('/create', async(req: Request, res: Response) => {
     }catch(err){
         console.log(err)
     }
+})
+
+gameHandler.get('/all', async(req: Request, res: Response) => {
+    const result = await findAllGames()
+    console.log(result)
+    try{
+        return res.status(200).send(result)
+    }catch(err){
+        return res.status(500).send(err)
+    }
+    
 })
 
 gameHandler.get('/:id', async(req: Request, res: Response) => {
